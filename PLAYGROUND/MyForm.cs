@@ -22,7 +22,7 @@ namespace PLAYGROUND
             scene = new Scene();
 
             ObjLoader loader = new ObjLoader();
-            Mesh model = loader.Load("Obj.obj"); // Asegúrate de especificar la ruta correcta del archivo
+            Mesh model = loader.Load("Cube.obj"); // Asegúrate de especificar la ruta correcta del archivo
             scene.AddModel(model);
         }
 
@@ -37,7 +37,7 @@ namespace PLAYGROUND
             Mesh modelToRotate = scene.Models[0]; // Asume que solo hay un modelo en la escena
 
             // Rota el modelo en los ejes X, Y y Z
-            modelToRotate.Transform.Rotate(1, 1, 1); // Ajusta los valores de rotación según sea necesario
+            modelToRotate.Transform.Rotate(1, 0, 0); // Ajusta los valores de rotación según sea necesario
 
             // Fuerza el renderizado actualizado
             renderer.RenderScene(scene);
@@ -46,11 +46,11 @@ namespace PLAYGROUND
 
         private void TIMER_Tick(object sender, EventArgs e)
         {
-            Mesh modelToRotate = scene.Models[0]; // Asume que solo hay un modelo en la escena
+            /*Mesh modelToRotate = scene.Models[0]; // Asume que solo hay un modelo en la escena
 
             // Rota el modelo en los ejes X, Y y Z
             modelToRotate.Transform.Rotate(1, 0, 0);
-            renderer.RenderScene(scene);
+            renderer.RenderScene(scene);*/
         }
 
         private void PCT_CANVAS_MouseMove(object sender, MouseEventArgs e)
