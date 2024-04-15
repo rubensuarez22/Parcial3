@@ -22,8 +22,9 @@ namespace PLAYGROUND
             scene = new Scene();
 
             ObjLoader loader = new ObjLoader();
-            Mesh model = loader.Load("Cube.obj"); // Asegúrate de especificar la ruta correcta del archivo
+            Mesh model = loader.Load("Obj.obj"); // Asegúrate de especificar la ruta correcta del archivo
             scene.AddModel(model);
+            
         }
 
         private void MyForm_SizeChanged(object sender, EventArgs e)

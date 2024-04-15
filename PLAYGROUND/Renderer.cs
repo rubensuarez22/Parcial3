@@ -33,17 +33,27 @@ namespace PLAYGROUND
         }
 
 
-        public List<float> Interpolate(float start, float end, int steps)
+        private List<float> Interpolate(float start, float end, int steps)
         {
-            List<float> results = new List<float>();
-            float delta = (end - start) / steps;
+            List<float> values = new List<float>();
+
+            if (steps <= 0)
+            {
+                values.Add(start);
+                return values;
+            }
+
+            float stepSize = (end - start) / steps;
+            float value = start;
+
             for (int i = 0; i <= steps; i++)
             {
-                results.Add(start + delta * i);
+                values.Add(value);
+                value += stepSize;
             }
-            return results;
-        }
 
+            return values;
+        }
 
         public void DrawLine(Vertex v0, Vertex v1, Color color)
         {
@@ -73,6 +83,44 @@ namespace PLAYGROUND
                 return max;
             return value;
         }
+
+        public void DrawFilledTriangle(PointF p0, PointF p1, PointF p2)
+        {
+            List<PointF> points = new List<PointF> { p0, p1, p2 };
+            points.Sort((a, b) => a.Y.CompareTo(b.Y));
+
+            p0 = points[0];
+            p1 = points[1];
+            p2 = points[2];
+
+            int y0 = (int)p0.Y;
+            int y1 = (int)p1.Y;
+            int y2 = (int)p2.Y;
+
+            List<float> x01 = Interpolate(p0.X, p1.X, y1 - y0);
+            List<float> x02 = Interpolate(p0.X, p2.X, y2 - y0);
+            List<float> x12 = Interpolate(p1.X, p2.X, y2 - y1);
+
+            for (int y = y0; y <= y2; y++)
+            {
+                int xStart = y < y1 ? (int)x01[y - y0] : (int)x12[y - y1];
+                int xEnd = (int)x02[y - y0];
+
+                if (xStart > xEnd) // Asegúrate de que xStart es siempre menor o igual a xEnd
+                {
+                    int temp = xStart;
+                    xStart = xEnd;
+                    xEnd = temp;
+                }
+
+                for (int x = xStart; x <= xEnd; x++)
+                {
+                    canvas.SetPixel(x, y, Color.Blue);
+                }
+            }
+        }
+
+
 
         public void RenderTriangle(PointF p1, PointF p2, PointF p3)
         {
@@ -127,8 +175,9 @@ namespace PLAYGROUND
                     PointF p1 = PerspectiveTransform(v1, cameraZ, focalLength);
                     PointF p2 = PerspectiveTransform(v2, cameraZ, focalLength);
                     PointF p3 = PerspectiveTransform(v3, cameraZ, focalLength);
-
+                    DrawFilledTriangle(p1, p2, p3);
                     RenderTriangle(p1, p2, p3);
+                    
                 }
             }
 
