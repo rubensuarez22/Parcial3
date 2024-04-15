@@ -12,8 +12,10 @@ namespace PLAYGROUND
             mesh.Vertices = new List<Vertex>();
             mesh.Indexes = new List<int>();
 
-            foreach (var line in File.ReadAllLines(path))
+            string[] lines = File.ReadAllLines(path);
+            for (int lineIndex = 0; lineIndex < lines.Length; lineIndex++)
             {
+                string line = lines[lineIndex];
                 if (line.StartsWith("v "))
                 {
                     var vertexData = line.Substring(2).Split(' ');
@@ -41,9 +43,9 @@ namespace PLAYGROUND
                     else
                     {
                         // Agregar triángulo directamente
-                        foreach (var index in faceData)
+                        for (int i = 0; i < faceData.Length; i++)
                         {
-                            mesh.Indexes.Add(int.Parse(index.Split('/')[0]) - 1);
+                            mesh.Indexes.Add(int.Parse(faceData[i].Split('/')[0]) - 1);
                         }
                     }
                 }
@@ -51,6 +53,5 @@ namespace PLAYGROUND
             mesh.CalculateCenter();
             return mesh;
         }
-
     }
 }

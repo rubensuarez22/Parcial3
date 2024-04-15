@@ -16,11 +16,11 @@ namespace PLAYGROUND
             this.canvas = canvas;
         }
 
-        private void Swap(ref Point p1, ref Point p2)
+        private void Swap(ref Vertex v1, ref Vertex v2)
         {
-            Point temp = p1;
-            p1 = p2;
-            p2 = temp;
+            Vertex temp = v1;
+            v1 = v2;
+            v2 = temp;
         }
 
         public void SortByY(Triangle triangle)
@@ -47,15 +47,13 @@ namespace PLAYGROUND
 
         public void DrawLine(Vertex v0, Vertex v1, Color color)
         {
-            int steps = (int)Math.Max(Math.Abs(v1.X - v0.X), Math.Abs(v1.Y - v0.Y));
+            int steps = Math.Max(Math.Abs((int)(v1.X - v0.X)), Math.Abs((int)(v1.Y - v0.Y)));
             List<float> xValues = Interpolate(v0.X, v1.X, steps);
             List<float> yValues = Interpolate(v0.Y, v1.Y, steps);
 
             for (int i = 0; i <= steps; i++)
             {
-                int x = (int)Math.Round(xValues[i]);
-                int y = (int)Math.Round(yValues[i]);
-                canvas.SetPixel(x, y, CalculateShadedColorVertex(v0.Color, v1.Color, i / (float)steps));
+                canvas.SetPixel((int)Math.Round(xValues[i]), (int)Math.Round(yValues[i]), color);
             }
         }
 
@@ -75,9 +73,6 @@ namespace PLAYGROUND
                 return max;
             return value;
         }
-
-
-
 
         public void RenderTriangle(PointF p1, PointF p2, PointF p3)
         {
@@ -102,23 +97,22 @@ namespace PLAYGROUND
             );
         }
 
-
-
         public void RenderScene(Scene scene)
         {
-            canvas.FastClear(); // Limpia el canvas
+            canvas.FastClear(); // Clears the canvas
 
-            float cameraZ = -5.0f; // Asumiendo que este es un buen valor para tu escena
-            float focalLength = 200; // También ajusta este valor como sea necesario
+            float cameraZ = -5.0f;
+            float focalLength = 200;
 
-            foreach (Mesh mesh in scene.Models)
+            for (int j = 0; j < scene.Models.Count; j++)
             {
-                // Aplica las rotaciones a cada vértice del mesh
+                Mesh mesh = scene.Models[j];
                 List<Vertex> rotatedVertices = new List<Vertex>();
-                foreach (Vertex vertex in mesh.Vertices)
+
+                for (int i = 0; i < mesh.Vertices.Count; i++)
                 {
-                    Vertex rotated = vertex;
-                    rotated = Rotaciones.Rot(mesh.Transform.RotationX, rotated, 'X');
+                    Vertex vertex = mesh.Vertices[i];
+                    Vertex rotated = Rotaciones.Rot(mesh.Transform.RotationX, vertex, 'X');
                     rotated = Rotaciones.Rot(mesh.Transform.RotationY, rotated, 'Y');
                     rotated = Rotaciones.Rot(mesh.Transform.RotationZ, rotated, 'Z');
                     rotatedVertices.Add(rotated);
@@ -138,8 +132,10 @@ namespace PLAYGROUND
                 }
             }
 
-            canvas.Refresh(); // Actualiza el PictureBox para mostrar el nuevo contenido
+            canvas.Refresh(); // Refreshes the PictureBox to display the new content
         }
+
+
 
     }
 }
