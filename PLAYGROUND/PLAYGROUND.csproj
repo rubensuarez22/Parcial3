@@ -50,7 +50,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Canvas.cs" />
-    <Compile Include="Light.cs" />
     <Compile Include="Mesh.cs" />
     <Compile Include="Mtx.cs" />
     <Compile Include="MyForm.cs">
