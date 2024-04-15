@@ -38,6 +38,7 @@
             this.LBL_STATUS = new System.Windows.Forms.Label();
             this.PNL_HEADER = new System.Windows.Forms.Panel();
             this.TIMER = new System.Windows.Forms.Timer(this.components);
+            this.BTN_2 = new System.Windows.Forms.Button();
             this.PNL_MAIN.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.PCT_CANVAS)).BeginInit();
             this.panel1.SuspendLayout();
@@ -85,6 +86,7 @@
             // panel1
             // 
             this.panel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(20)))), ((int)(((byte)(20)))));
+            this.panel1.Controls.Add(this.BTN_2);
             this.panel1.Controls.Add(this.BTN_Rotate);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Left;
             this.panel1.Location = new System.Drawing.Point(0, 100);
@@ -136,6 +138,16 @@
             this.TIMER.Interval = 10;
             this.TIMER.Tick += new System.EventHandler(this.TIMER_Tick);
             // 
+            // BTN_2
+            // 
+            this.BTN_2.Location = new System.Drawing.Point(49, 119);
+            this.BTN_2.Name = "BTN_2";
+            this.BTN_2.Size = new System.Drawing.Size(75, 23);
+            this.BTN_2.TabIndex = 1;
+            this.BTN_2.Text = "button1";
+            this.BTN_2.UseVisualStyleBackColor = true;
+            this.BTN_2.Click += new System.EventHandler(this.BTN_2_Click);
+            // 
             // MyForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -164,6 +176,7 @@
         private System.Windows.Forms.Panel PNL_HEADER;
         private System.Windows.Forms.Timer TIMER;
         private System.Windows.Forms.Button BTN_Rotate;
+        private System.Windows.Forms.Button BTN_2;
     }
 }
 

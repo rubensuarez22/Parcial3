@@ -22,7 +22,7 @@ namespace PLAYGROUND
             scene = new Scene();
 
             ObjLoader loader = new ObjLoader();
-            Mesh model = loader.Load("Obj.obj"); // Asegúrate de especificar la ruta correcta del archivo
+            Mesh model = loader.Load("Cube.obj"); // Asegúrate de especificar la ruta correcta del archivo
             scene.AddModel(model);
             
         }
@@ -42,6 +42,8 @@ namespace PLAYGROUND
 
             // Fuerza el renderizado actualizado
             renderer.RenderScene(scene);
+
+            
         }
 
 
@@ -57,6 +59,13 @@ namespace PLAYGROUND
         private void PCT_CANVAS_MouseMove(object sender, MouseEventArgs e)
         {
             LBL_STATUS.Text = e.Location.ToString() + canvas.bmp.Size;
+        }
+
+        private void BTN_2_Click(object sender, EventArgs e)
+        {
+            
+            renderer.UpdateLightDirection(0, -1, 0);
+            renderer.RenderScene(scene);
         }
     }
 }

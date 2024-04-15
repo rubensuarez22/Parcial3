@@ -9,6 +9,7 @@ namespace PLAYGROUND
     public class Renderer
     {
         Canvas canvas;
+        public Vertex lightDirection = new Vertex { X = 0, Y = 0, Z = -1 }; //Fuente de luz
 
         public Renderer(Canvas canvas)
         {
@@ -21,6 +22,13 @@ namespace PLAYGROUND
             Vertex temp = v1;
             v1 = v2;
             v2 = temp;
+        }
+
+        public void UpdateLightDirection(float x, float y, float z)
+        {
+            lightDirection.X = x;
+            lightDirection.Y = y;
+            lightDirection.Z = z;
         }
 
         public void SortByY(Triangle triangle)
@@ -67,24 +75,50 @@ namespace PLAYGROUND
             }
         }
 
-        private Color CalculateShadedColorVertex(Color start, Color end, float ratio)
+
+        private Vertex CalculateNormal(Vertex v1, Vertex v2, Vertex v3)
         {
-            int r = Clamp((int)(start.R + ratio * (end.R - start.R)), 0, 255);
-            int g = Clamp((int)(start.G + ratio * (end.G - start.G)), 0, 255);
-            int b = Clamp((int)(start.B + ratio * (end.B - start.B)), 0, 255);
-            return Color.FromArgb(r, g, b);
+            // Calcular los vectores de los lados del triángulo
+            Vertex edge1 = new Vertex
+            {
+                X = v2.X - v1.X,
+                Y = v2.Y - v1.Y,
+                Z = v2.Z - v1.Z
+            };
+
+            Vertex edge2 = new Vertex
+            {
+                X = v3.X - v1.X,
+                Y = v3.Y - v1.Y,
+                Z = v3.Z - v1.Z
+            };
+
+            // Calcular el producto vectorial de los vectores de los lados para obtener la normal
+            Vertex normal = new Vertex
+            {
+                X = edge1.Y * edge2.Z - edge1.Z * edge2.Y,
+                Y = edge1.Z * edge2.X - edge1.X * edge2.Z,
+                Z = edge1.X * edge2.Y - edge1.Y * edge2.X
+            };
+
+            // Si la normal es cero (los vectores de los lados son paralelos o se cruzan), devolvemos una normal predeterminada
+            if (normal.X == 0 && normal.Y == 0 && normal.Z == 0)
+            {
+                normal = new Vertex { X = 0, Y = 0, Z = 1 }; // Normal predeterminada apuntando hacia arriba
+            }
+            else
+            {
+                // Normalizar el vector normal
+                float length = (float)Math.Sqrt(normal.X * normal.X + normal.Y * normal.Y + normal.Z * normal.Z);
+                normal.X /= length;
+                normal.Y /= length;
+                normal.Z /= length;
+            }
+
+            return normal;
         }
 
-        public static int Clamp(int value, int min, int max)
-        {
-            if (value < min)
-                return min;
-            if (value > max)
-                return max;
-            return value;
-        }
-
-        public void DrawFilledTriangle(PointF p0, PointF p1, PointF p2)
+        public void DrawFilledTriangle(PointF p0, PointF p1, PointF p2, Color color)
         {
             List<PointF> points = new List<PointF> { p0, p1, p2 };
             points.Sort((a, b) => a.Y.CompareTo(b.Y));
@@ -115,7 +149,7 @@ namespace PLAYGROUND
 
                 for (int x = xStart; x <= xEnd; x++)
                 {
-                    canvas.SetPixel(x, y, Color.Blue);
+                    canvas.SetPixel(x, y, color);
                 }
             }
         }
@@ -172,16 +206,38 @@ namespace PLAYGROUND
                     Vertex v2 = rotatedVertices[mesh.Indexes[i + 1]];
                     Vertex v3 = rotatedVertices[mesh.Indexes[i + 2]];
 
+                    // Calcular la normal del triángulo
+                    Vertex normal = CalculateNormal(v1, v2, v3);
+                    Console.WriteLine($"Normal del triángulo: ({normal.X}, {normal.Y}, {normal.Z})"); // Línea de depuración
+
+                    // Calcular la intensidad de la luz reflejada utilizando la ley de Lambert
+                    float intensity = Math.Max(0, normal.X * lightDirection.X + normal.Y * lightDirection.Y + normal.Z * lightDirection.Z);
+                    Console.WriteLine($"Intensidad de la luz: {intensity}"); // Línea de depuración
+
+                    // Calcular el color final del triángulo teniendo en cuenta la intensidad de la luz
+                    Color triangleColor = Color.FromArgb(
+                        Clamp((int)(intensity * 255), 0, 255),
+                        Clamp((int)(intensity * 255), 0, 255),
+                        Clamp((int)(intensity * 255), 0, 255)
+                    );
+
                     PointF p1 = PerspectiveTransform(v1, cameraZ, focalLength);
                     PointF p2 = PerspectiveTransform(v2, cameraZ, focalLength);
                     PointF p3 = PerspectiveTransform(v3, cameraZ, focalLength);
-                    DrawFilledTriangle(p1, p2, p3);
-                    RenderTriangle(p1, p2, p3);
-                    
+                    DrawFilledTriangle(p1, p2, p3, triangleColor);
                 }
             }
 
             canvas.Refresh(); // Refreshes the PictureBox to display the new content
+        }
+
+        public static int Clamp(int value, int min, int max)
+        {
+            if (value < min)
+                return min;
+            if (value > max)
+                return max;
+            return value;
         }
 
 
